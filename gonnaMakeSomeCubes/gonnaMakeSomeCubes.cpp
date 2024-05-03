@@ -62,31 +62,31 @@ void line(Screen& screen, int x1, int y1, int x2, int y2) {
     
     if (lengthX == 0) {
         for (int i = 0; i < lengthY + 1; i++) {
-            screen.input(chr, x1, minY + i);
-            //gridInput(screen, x1, minY + i);
+            //screen.input(chr, x1, minY + i);
+            gridInput(screen, x1, minY + i);
         }
         return;
     }
 
     if (lengthY == 0) {
         for (int i = 0; i < lengthX; i++) {
-            screen.input(chr, minX + i, y1);
-            //gridInput(screen, x1, minY + i);
+            //screen.input(chr, minX + i, y1);
+            gridInput(screen, minX + i, y1);
         }
         return;
     }
 
     if (abs(gradient) < 1) {
         for (int i = 0; i < lengthX + 1; i++) {
-            screen.input(chr, leftPos.x + i, leftPos.y + round(i * gradient));
-            //gridInput(screen, x1, minY + i);
+            //screen.input(chr, leftPos.x + i, leftPos.y + round(i * gradient));
+            gridInput(screen, leftPos.x + i, leftPos.y + round(i * gradient));
         }
         return;
     }
 
     for (int i = 0; i < lengthY + 1; i++) {
-        screen.input(chr, topPos.x + round(i * (1 / gradient)), topPos.y + i);
-        //gridInput(screen, x1, minY + i);
+        //screen.input(chr, topPos.x + round(i * (1 / gradient)), topPos.y + i);
+        gridInput(screen, topPos.x + round(i * (1 / gradient)), topPos.y + i);
     }
 }
 
@@ -278,7 +278,7 @@ int main() {
         screen.text("Mouse position:", 4, 2);
         screen.text("screen: x:" + std::to_string(mouseX) + ", y:" + std::to_string(mouseY), 6, 3);
         screen.text("grid: x:" + std::to_string(mouseGridPos.x) + ", y:" + std::to_string(mouseGridPos.y), 6, 4);
-        line(screen, 150, 25, mouseX, mouseY);
+        line(screen, 75, 25, mouseGridPos.x, mouseGridPos.y);
         
         for (int i = 0; i < 12; i++) {
             vector3 node1 = cube.nodes[cube.edges[i].x];
