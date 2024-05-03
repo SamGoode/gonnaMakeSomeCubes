@@ -186,6 +186,13 @@ int main() {
     SetConsoleMode(hout, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
     SetConsoleMode(hin, ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
 
+    SHORT width = 200;
+    SHORT height = 50;
+
+    SMALL_RECT dim = { 0, 0, width - 1, height - 1 };
+
+    SetConsoleScreenBufferSize(hout, { width, height });
+
     CONSOLE_FONT_INFOEX cfi;
     cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
 
@@ -196,13 +203,15 @@ int main() {
 
     SetCurrentConsoleFontEx(hout, false, &cfi);
 
-    SHORT width = 200;
-    SHORT height = 50;
+    //pretty sure it only needs one redo, so no for loop check
+    if (!SetConsoleWindowInfo(hout, true, &dim)) {
+        cfi.dwFontSize.Y = 16;
+        cfi.dwFontSize.X = 9;
 
-    SMALL_RECT dim = { 0, 0, width - 1, height - 1 };
+        SetCurrentConsoleFontEx(hout, false, &cfi);
 
-    SetConsoleScreenBufferSize(hout, { width, height });
-    SetConsoleWindowInfo(hout, true, &dim);
+        SetConsoleWindowInfo(hout, true, &dim);
+    }
 
     INPUT_RECORD inputRecord;
     DWORD events;
