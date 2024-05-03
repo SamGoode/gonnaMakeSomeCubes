@@ -7,6 +7,19 @@ struct pos {
     int y;
 };
 
+//pos mapGridToScreen(int x, int y) {
+//    return 
+//}
+
+pos mapScreenToGrid(int x, int y) {
+    return { x / 2, y };
+}
+
+void gridInput(Screen& screen, int gridX, int gridY) {
+    screen.input('[', gridX*2, gridY);
+    screen.input(']', gridX*2 + 1, gridY);
+}
+
 void line(Screen& screen, int x1, int y1, int x2, int y2) {
     char chr = '*';
 
@@ -50,6 +63,7 @@ void line(Screen& screen, int x1, int y1, int x2, int y2) {
     if (lengthX == 0) {
         for (int i = 0; i < lengthY + 1; i++) {
             screen.input(chr, x1, minY + i);
+            //gridInput(screen, x1, minY + i);
         }
         return;
     }
@@ -57,6 +71,7 @@ void line(Screen& screen, int x1, int y1, int x2, int y2) {
     if (lengthY == 0) {
         for (int i = 0; i < lengthX; i++) {
             screen.input(chr, minX + i, y1);
+            //gridInput(screen, x1, minY + i);
         }
         return;
     }
@@ -64,12 +79,14 @@ void line(Screen& screen, int x1, int y1, int x2, int y2) {
     if (abs(gradient) < 1) {
         for (int i = 0; i < lengthX + 1; i++) {
             screen.input(chr, leftPos.x + i, leftPos.y + round(i * gradient));
+            //gridInput(screen, x1, minY + i);
         }
         return;
     }
 
     for (int i = 0; i < lengthY + 1; i++) {
         screen.input(chr, topPos.x + round(i * (1 / gradient)), topPos.y + i);
+        //gridInput(screen, x1, minY + i);
     }
 }
 
@@ -158,7 +175,6 @@ void rotateY3D(float theta, vector3 nodes[8]) {
     }
 }
 
-
 int main() {
     SetConsoleOutputCP(437);
 
@@ -201,7 +217,9 @@ int main() {
 
     Cuboid cube = Cuboid(-10, -10, -10, 20, 20, 20);
     
-    pos offset = { width / 2, height / 2 };
+    pos offset = { width / 4, height / 2 };
+
+    pos mouseGridPos = { 0, 0 };
 
     while (true) {
         GetNumberOfConsoleInputEvents(hin, &events);
@@ -243,6 +261,8 @@ int main() {
                 mouseX = inputRecord.Event.MouseEvent.dwMousePosition.X;
                 mouseY = inputRecord.Event.MouseEvent.dwMousePosition.Y;
 
+                mouseGridPos = mapScreenToGrid(mouseX, mouseY);
+
                 if (inputRecord.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
                     //mouseClick
                 }
@@ -255,9 +275,10 @@ int main() {
 
         screen.reset();
 
-        screen.text("Mouse pos: x:" + std::to_string(mouseX) + ", y:" + std::to_string(mouseY), 2, 1);
-        //screen.text(std::to_string((float)(14 - 10)/(30 - 20)), 2, 3);
-        //line(screen, 100, 20, mouseX, mouseY);
+        screen.text("Mouse position:", 4, 2);
+        screen.text("screen: x:" + std::to_string(mouseX) + ", y:" + std::to_string(mouseY), 6, 3);
+        screen.text("grid: x:" + std::to_string(mouseGridPos.x) + ", y:" + std::to_string(mouseGridPos.y), 6, 4);
+        line(screen, 150, 25, mouseX, mouseY);
         
         for (int i = 0; i < 12; i++) {
             vector3 node1 = cube.nodes[cube.edges[i].x];
@@ -266,21 +287,8 @@ int main() {
             line(screen, node1.x + offset.x, node1.y + offset.y, node2.x + offset.x, node2.y + offset.y);
         }
 
-
-
-        //line(screen, 5, 5, 5, 5);
-
-        //line(screen, 10, 10, 20, 10);
-        //line(screen, 20, 10, 20, 20);
-        //line(screen, 20, 20, 10, 20);
-        //line(screen, 10, 20, 10, 10);
-
-        //line(screen, 80, 10, 120, 8);
-        //line(screen, 100, 20, 120, 8);
-        //line(screen, 97, 10, 100, 20);
-
         //mouse cursor
-        screen.input('@', mouseX, mouseY);
+        gridInput(screen, mouseGridPos.x, mouseGridPos.y);
 
         screen.print();
 
